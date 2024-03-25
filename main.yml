@@ -1,0 +1,64 @@
+---
+- hosts: "{{ target_hosts | default('all') }}"
+  gather_facts: true
+  become: true
+  vars:
+    nginx_reverse_proxy_app: docdb
+    nginx_reverse_proxy_app_listen_port: 80
+    service_domain_name: "{{ inventory_hostname }}"
+    pod_name: docdb
+    sysacct_name: docdb
+    sysacct_uid: 967 # change this depending on disposition of existing system accounts
+    mysql_uid_container: 999
+    mysql_gid_container: 999
+    httpd_uid_container: 33
+    httpd_gid_container: 33
+    
+  tasks:
+  - name: include almalinux base role
+    include_role: 
+      name: almalinux-8-base
+  - name: include podman systemd role
+    include_role:
+      name: podman-systemd
+  - name: docdb mysql database init sql files
+    block:
+    - name: create config directory for docdbd database files
+      ansible.builtin.file:
+        state: directory
+        path: /var/lib/{{ vars.sysacct_name }}/data/docker-entrypoint-initdb.d
+        owner: "{{ vars.sysacct_name }}"
+        group: "{{ vars.sysacct_name }}"
+        mode: '0770'
+    - name: create SQL files
+      ansible.builtin.template:
+        src: roles/docdb-podman-systemd/templates/{{ item.input }}
+        dest: /var/lib/{{ vars.sysacct_name }}/data/docker-entrypoint-initdb.d/{{ item.output }}
+        owner: "{{ vars.sysacct_name }}"
+        group: "{{ vars.sysacct_name }}"
+        mode: '0700'
+      loop:
+      - input: 00_InitializeDocDBDatabase.sql.j2
+        output: 00_InitializeDocDBDatabase.sql
+      - input: 05_CreateDocDBTables.sql.j2
+        output: 05_CreateDocDBTables.sql
+      - input: 10_InitializeSecurityGroupsTable.sql.j2
+        output: 10_InitializeSecurityGroupsTable.sql
+    - name: fix permissions on generated files on /var/lib/{{ vars.sysacct_name }}/data/docker-entrypoint-initdb.d
+      ansible.builtin.include_tasks:
+        file: roles/docdb-podman-systemd/tasks/fix_directory_permissions.yml
+      vars:
+        host_mount_dir: /var/lib/{{ vars.sysacct_name }}/data/docker-entrypoint-initdb.d
+        container_uid: "{{ mysql_uid_container }}"
+        container_gid: "{{ mysql_gid_container }}"
+    # end block
+  - name: include mysql podman systemd
+    include_role:
+      name: mysql-podman-systemd
+  
+  - name: include docdb podman systemd
+    include_role: 
+      name: docdb-podman-systemd
+#  - name: nginx-reverse-proxy
+#    include_role:
+#      name: nginx-reverse-proxy
