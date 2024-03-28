@@ -56,7 +56,11 @@ ansible-galaxy install -r ./roles/requirements.yml
 Generate Ansible vault file containing DocDB configuration and secrets:
 
 ```
+export DOCDB_PROJECT_NAME="{{ DocDBProjectName }}"
+export DOCDB_SHORTPROJECT_NAME="{{ DocDBShortProjectName }}"
+
 ansible-playbook -i localhost, --connection local docdb-secrets-generate.yml
+ansible-vault encrypt --vault-id $(id -un)@${HOME}/.ansible/vaultpassword ${HOME}/.ansible/${DOCDB_SHORTPROJECT_NAME}-secrets.yml
 ```
 
 The output will look like the following:
@@ -111,8 +115,6 @@ localhost                  : ok=9    changed=1    unreachable=0    failed=0    s
 Finally, execute `main.yml`:
 
 ```
-export DOCDB_PROJECT_NAME="{{ DocDBProjectName }}"
-export DOCDB_SHORTPROJECT_NAME="{{ DocDBShortProjectName }}"
 export TARGET_FQDN="{{ FQDNOfDocDBServer }}"
 export TARGET_USER="{{ NameOfUserWithAdminPrivilegesOnServer }}"
 
