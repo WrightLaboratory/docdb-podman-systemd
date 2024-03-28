@@ -1,8 +1,27 @@
 # Containerized DocDB under Rootless Podman Systemd
 
+## Introduction
+
+[DocDB](https://github.com/ericvaandering/DocDB.git) is a document management system developed by Eric Vaandering at Fermi Lab and used by the particle physics community to track the artifacts of a specific collaboration.
+
+Its notion of a document extends beyond journal articles and their drafts to encompass meetings, symposia notes, slides, operational documentation, etc.
+
+Since a particle physics project may span decades, it is important to implement a DocDB instance that assures durability and maintainability over its projected lifespan.
+
+The need to upgrade the host operating system and the reliance on a specific server incurs a non-trivial amount of technical debt.
+
+Containerizing a DocDB instance helps alleviate some this debt by freezing the operating system and runtime environments.
+
+We have chosen Podman over Docker as its architecture lends itself to running applications with the least system privileges.
+Furthermore, Podman with its support for Kubernetes YAML provides for a frictionless migration path from a single node deployment to a clustered Kubernetes enviromnent.
+
+While the design is straightforward, the technical details of configuring the host system's support for rootless Podman is rather involved, especially under Redhat Enterprise 8 Linux and its derivative like AlmaLinux.
+
+These details are sorted in the accompanying Ansible code in the [`ansible-roles`](https://github.com/WrightLaboratory/ansible-roles.git) repository.
+
 ## Prepare Ansible Management Node
 
-Install Python using (`pyenv`)[https://github.com/pyenv/pyenv]:
+Install Python using [`pyenv`](https://github.com/pyenv/pyenv).
 
 ```
 pyenv install $(cat .python-version)
