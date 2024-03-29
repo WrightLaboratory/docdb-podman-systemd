@@ -119,7 +119,7 @@ export TARGET_USER="{{ NameOfUserWithAdminPrivilegesOnServer }}"
 ```
 
 Generate an archive that contains an SSL certficate, key, and bundle file using this [repository](https://github.com/vbalbarin/cert-manager.git).
-(Note, you use generate a self-signed certificate and key without a certificate authority chain but Chromium-based browser will not allow you to bypass the certificate error.)
+(Note, you can generate and use a self-signed certificate and key without a certificate authority chain but Chromium-based browsers will not allow you to bypass the certificate error.)
 
 Extract this archive to `./roles/nginx-revers-proxy/files`
 
