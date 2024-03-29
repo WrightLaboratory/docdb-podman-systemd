@@ -43,10 +43,7 @@ pip install -r requirements.txt
 
 Pull the required Ansible roles from the the Wright Laboratory `ansible-roles` repository as a Git submodule:
 
-
 ```
-cd docdb-podman-systemd
-
 git submodule add  https://github.com/WrightLaboratory/ansible-roles.git roles
 
 # Install required Ansible modules
