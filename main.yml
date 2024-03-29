@@ -59,6 +59,6 @@
   - name: include docdb podman systemd
     include_role: 
       name: docdb-podman-systemd
-#  - name: nginx-reverse-proxy
-#    include_role:
-#      name: nginx-reverse-proxy
+  - name: nginx-reverse-proxy
+    include_role:
+      name: nginx-reverse-proxy

@@ -112,12 +112,26 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=9    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
 ```
 
-Finally, execute `main.yml`:
+Prepare environment for running playbook.
 
 ```
 export TARGET_FQDN="{{ FQDNOfDocDBServer }}"
 export TARGET_USER="{{ NameOfUserWithAdminPrivilegesOnServer }}"
+```
 
+Generate an archive that contains an SSL certficate, key, and bundle file using this [repository](https://github.com/vbalbarin/cert-manager.git).
+(Note, you use generate a self-signed certificate and key without a certificate authority chain but Chromium-based browser will not allow you to bypass the certificate error.)
+
+Extract this archive to `./roles/nginx-revers-proxy/files`
+
+```
+mkdir -p ./roles/nginx-reverse-proxy/files
+tar -xvf ${TARGET_FQDN}.gz -C ./roles/nginx-reverse-proxy/files
+```
+
+Execute playbook:
+
+```
 ansible-playbook --user="${TARGET_USER}" \
     --vault-id "$(id -un)@${HOME}/.ansible/vaultpassword" \
     -e "@${HOME}/.ansible/${DOCDB_SHORTPROJECT_NAME}-secrets.yml" \
