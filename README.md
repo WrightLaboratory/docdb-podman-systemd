@@ -21,6 +21,14 @@ These details are sorted in the accompanying Ansible code in the [`ansible-roles
 
 ## Prepare Ansible Management Node
 
+Clone this repository:
+
+```
+git clone https://github.com/WrightLaboratory/docdb-podman-systemd.git docdb-podman-systemd
+
+cd docdb-podman-systemd
+```
+
 Install Python using [`pyenv`](https://github.com/pyenv/pyenv).
 
 ```
@@ -31,12 +39,6 @@ python -m venv ./.venv
 source ./.venv/bin/activate
 
 pip install -r requirements.txt
-```
-
-Clone this repository:
-
-```
-git clone docdb-podman-systemd
 ```
 
 Pull the required Ansible roles from the the Wright Laboratory `ansible-roles` repository as a Git submodule:
